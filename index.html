@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vabe-кодер — Профессиональная разработка</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #12122a;
+  --bg-card: rgba(18, 18, 50, 0.85);
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0d0;
+  --accent-purple: #8b5cf6;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --accent-orange: #f97316;
+  --accent-pink: #ec4899;
+  --glow-purple: rgba(139, 92, 246, 0.6);
+  --glow-blue: rgba(59, 130, 246, 0.6);
+  --glow-cyan: rgba(6, 182, 212, 0.6);
+  --glow-orange: rgba(249, 115, 22, 0.6);
+  --border-color: rgba(139, 92, 246, 0.3);
+  --gradient-main: linear-gradient(135deg, #8b5cf6, #3b82f6, #06b6d4);
+  --gradient-orange: linear-gradient(135deg, #f97316, #ec4899);
+  --chat-bg: rgba(18, 18, 50, 0.95);
+  --input-bg: rgba(30, 30, 70, 0.9);
+}
+
+[data-theme="light"] {
+  --bg-primary: #f0f0ff;
+  --bg-secondary: #e8e8f8;
+  --bg-card: rgba(255, 255, 255, 0.9);
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a6a;
+  --border-color: rgba(139, 92, 246, 0.3);
+  --chat-bg: rgba(255, 255, 255, 0.97);
+  --input-bg: rgba(240, 240, 255, 0.9);
+  --glow-purple: rgba(139, 92, 246, 0.3);
+  --glow-blue: rgba(59, 130, 246, 0.3);
+  --glow-cyan: rgba(6, 182, 212, 0.3);
+  --glow-orange: rgba(249, 115, 22, 0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* ============ ANIMATED BACKGROUND ============ */
+#bg-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-glow-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+  pointer-events: none;
+  z-index: 0;
+  animation: orbFloat 20s ease-in-out infinite;
+}
+
+.bg-glow-orb.orb1 {
+  width: 500px; height: 500px;
+  background: var(--accent-purple);
+  top: -100px; left: -100px;
+  animation-delay: 0s;
+}
+
+.bg-glow-orb.orb2 {
+  width: 400px; height: 400px;
+  background: var(--accent-blue);
+  top: 50%; right: -100px;
+  animation-delay: -7s;
+}
+
+.bg-glow-orb.orb3 {
+  width: 350px; height: 350px;
+  background: var(--accent-cyan);
+  bottom: -50px; left: 30%;
+  animation-delay: -14s;
+}
+
+.bg-glow-orb.orb4 {
+  width: 300px; height: 300px;
+  background: var(--accent-orange);
+  top: 30%; left: 50%;
+  animation-delay: -3s;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(50px, -80px) scale(1.1); }
+  50% { transform: translate(-30px, 60px) scale(0.9); }
+  75% { transform: translate(70px, 30px) scale(1.05); }
+}
+
+/* ============ THEME TOGGLE ============ */
+.theme-toggle {
+  position: fixed;
+  top: 20px; left: 20px;
+  z-index: 1000;
+  width: 50px; height: 50px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  background: var(--bg-card);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 20px var(--glow-purple);
+}
+
+.theme-toggle:hover {
+  transform: rotate(360deg) scale(1.15);
+  box-shadow: 0 0 35px var(--glow-purple);
+}
+
+.theme-toggle:active { transform: rotate(360deg) scale(0.95); }
+
+/* ============ PARTICLES ============ */
+.particles {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--accent-purple);
+  border-radius: 50%;
+  animation: particleFloat linear infinite;
+  box-shadow: 0 0 6px var(--glow-purple);
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(100vh) scale(0); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+/* ============ MAIN CONTENT ============ */
+.main-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============ HEADER / HERO ============ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+}
+
+.hero-logo {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 900;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  margin-bottom: 10px;
+  animation: logoGlow 3s ease-in-out infinite;
+  position: relative;
+}
+
+.hero-logo::after {
+  content: 'Vabe-кодер';
+  position: absolute;
+  top: 0; left: 0;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: blur(20px);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+@keyframes logoGlow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
+}
+
+.hero-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.hero-description {
+  max-width: 700px;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  border-radius: 50px;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  letter-spacing: 0.5px;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+  width: 300px; height: 300px;
+}
+
+.btn-primary {
+  background: var(--gradient-main);
+  color: #fff;
+  box-shadow: 0 4px 25px var(--glow-purple);
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 40px var(--glow-purple);
+}
+
+.btn-primary:active { transform: translateY(0) scale(0.98); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--accent-purple);
+  box-shadow: 0 0 15px var(--glow-purple);
+}
+
+.btn-secondary:hover {
+  background: var(--accent-purple);
+  color: #fff;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 40px var(--glow-purple);
+}
+
+.btn-secondary:active { transform: translateY(0) scale(0.98); }
+
+.btn-orange {
+  background: var(--gradient-orange);
+  color: #fff;
+  box-shadow: 0 4px 25px var(--glow-orange);
+}
+
+.btn-orange:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 8px 40px var(--glow-orange);
+}
+
+.btn-orange:active { transform: translateY(0) scale(0.98); }
+
+/* Ripple effect */
+.btn .ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ============ SECTION STYLES ============ */
+section {
+  padding: 100px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  text-align: center;
+  margin-bottom: 15px;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin-bottom: 60px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============ FEATURES ============ */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 35px 30px;
+  backdrop-filter: blur(15px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: var(--gradient-main);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s;
+}
+
+.feature-card:hover::before { transform: scaleX(1); }
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
+  border-color: var(--accent-purple);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.feature-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+/* ============ PRICING ============ */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  align-items: stretch;
+}
+
+.pricing-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 40px 35px;
+  backdrop-filter: blur(15px);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card:hover {
+  transform: translateY(-10px) scale(1.02);
+}
+
+.pricing-card.basic { border-color: var(--accent-cyan); }
+.pricing-card.basic:hover { box-shadow: 0 20px 60px var(--glow-cyan); }
+.pricing-card.pro { border-color: var(--accent-purple); }
+.pricing-card.pro:hover { box-shadow: 0 20px 60px var(--glow-purple); }
+.pricing-card.elite { border-color: var(--accent-orange); }
+.pricing-card.elite:hover { box-shadow: 0 20px 60px var(--glow-orange); }
+
+.pricing-badge {
+  position: absolute;
+  top: 20px; right: -35px;
+  background: var(--gradient-orange);
+  color: #fff;
+  padding: 6px 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  transform: rotate(45deg);
+  letter-spacing: 1px;
+}
+
+.pricing-tier {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--accent-purple);
+}
+
+.pricing-card.elite .pricing-tier { color: var(--accent-orange); }
+.pricing-card.basic .pricing-tier { color: var(--accent-cyan); }
+
+.pricing-price {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  margin: 20px 0;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+.pricing-card.elite .pricing-price {
+  background: var(--gradient-orange);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+.pricing-period {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 25px;
+}
+
+.pricing-features {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 30px;
+  flex-grow: 1;
+}
+
+.pricing-features li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pricing-features li::before {
+  content: '✓';
+  color: var(--accent-purple);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.pricing-card.elite .pricing-features li::before { color: var(--accent-orange); }
+.pricing-card.basic .pricing-features li::before { color: var(--accent-cyan); }
+
+.pricing-deadline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(139, 92, 246, 0.1);
+  border-radius: 12px;
+  margin-bottom: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.pricing-deadline .icon { font-size: 1.2rem; }
+
+/* ============ TIMELINE ============ */
+.timeline {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: var(--gradient-main);
+  transform: translateX(-50%);
+}
+
+.timeline-item {
+  display: flex;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.timeline-item:nth-child(odd) { justify-content: flex-start; padding-right: 55%; }
+.timeline-item:nth-child(even) { justify-content: flex-end; padding-left: 55%; }
+
+.timeline-dot {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  width: 16px; height: 16px;
+  background: var(--accent-purple);
+  border-radius: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 20px var(--glow-purple);
+  z-index: 1;
+}
+
+.timeline-content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 25px;
+  backdrop-filter: blur(15px);
+  transition: all 0.3s;
+}
+
+.timeline-content:hover {
+  border-color: var(--accent-purple);
+  box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15);
+}
+
+.timeline-content h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  color: var(--accent-purple);
+  margin-bottom: 8px;
+}
+
+.timeline-content p {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 60px 20px 30px;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-col h4 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  margin-bottom: 20px;
+  color: var(--accent-purple);
+}
+
+.footer-col a {
+  display: block;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 5px 0;
+  font-size: 0.9rem;
+  transition: color 0.3s;
+}
+
+.footer-col a:hover { color: var(--accent-purple); }
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ============ MODALS ============ */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.3s;
+}
+
+.modal-overlay.active { display: flex; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 40px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+  position: relative;
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px; right: 20px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.8rem;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: var(--accent-purple);
+  transform: rotate(90deg);
+}
+
+.modal h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 25px;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.modal h3 {
+  font-size: 1.1rem;
+  margin: 20px 0 10px;
+  color: var(--accent-purple);
+}
+
+.modal p, .modal li {
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-size: 0.95rem;
+}
+
+.modal ul { padding-left: 20px; margin-bottom: 15px; }
+
+/* ============ CHAT WIDGET ============ */
+.chat-toggle {
+  position: fixed;
+  bottom: 30px; right: 30px;
+  width: 65px; height: 65px;
+  border-radius: 50%;
+  background: var(--gradient-main);
+  border: none;
+  cursor: pointer;
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: #fff;
+  box-shadow: 0 4px 30px var(--glow-purple);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: chatPulse 3s ease-in-out infinite;
+}
+
+.chat-toggle:hover {
+  transform: scale(1.15);
+  box-shadow: 0 6px 40px var(--glow-purple);
+}
+
+.chat-toggle:active { transform: scale(0.95); }
+
+@keyframes chatPulse {
+  0%, 100% { box-shadow: 0 4px 30px var(--glow-purple); }
+  50% { box-shadow: 0 4px 50px var(--glow-purple), 0 0 80px var(--glow-blue); }
+}
+
+.chat-window {
+  position: fixed;
+  bottom: 110px; right: 30px;
+  width: 400px;
+  max-height: 600px;
+  background: var(--chat-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  z-index: 1500;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  animation: chatOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.chat-window.open { display: flex; }
+
+@keyframes chatOpen {
+  from { transform: scale(0.8) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.chat-header {
+  background: var(--gradient-main);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-header-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+}
+
+.chat-header-info h4 {
+  color: #fff;
+  font-size: 1rem;
+}
+
+.chat-header-info span {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chat-header-info span::before {
+  content: '';
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  animation: msgIn 0.3s ease-out;
+}
+
+@keyframes msgIn {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.chat-msg.bot {
+  background: var(--input-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-msg.user {
+  background: var(--gradient-main);
+  color: #fff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-form {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-form input[type="text"],
+.chat-form input[type="tel"] {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.chat-form input:focus { border-color: var(--accent-purple); }
+
+.chat-form input::placeholder { color: var(--text-secondary); }
+
+.chat-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-form-row input { flex: 1; }
+
+.chat-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.chat-checkbox input[type="checkbox"] {
+  margin-top: 3px;
+  accent-color: var(--accent-purple);
+  width: 16px; height: 16px;
+}
+
+.chat-checkbox a {
+  color: var(--accent-purple);
+  text-decoration: underline;
+}
+
+.chat-send-row {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-send-row .btn { flex: 1; justify-content: center; padding: 12px; font-size: 0.85rem; }
+
+.btn-operator {
+  background: var(--gradient-orange);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.3s;
+  box-shadow: 0 0 15px var(--glow-orange);
+}
+
+.btn-operator:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 25px var(--glow-orange);
+}
+
+/* ============ SCROLL ANIMATIONS ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ SCROLLBAR ============ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+  border-radius: 4px;
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 768px) {
+  .chat-window {
+    width: calc(100% - 20px);
+    right: 10px;
+    bottom: 100px;
+    max-height: 70vh;
+  }
+
+  .pricing-grid { grid-template-columns: 1fr; }
+
+  .timeline::before { left: 20px; }
+  .timeline-item:nth-child(odd),
+  .timeline-item:nth-child(even) {
+    padding-left: 50px;
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+  .timeline-dot { left: 20px; }
+
+  .hero-logo { font-size: 2.5rem; }
+
+  .theme-toggle { width: 42px; height: 42px; font-size: 18px; }
+}
+
+/* ============ GLOW LINE DIVIDER ============ */
+.glow-divider {
+  height: 2px;
+  background: var(--gradient-main);
+  margin: 0 auto;
+  max-width: 1200px;
+  border-radius: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.glow-divider::after {
+  content: '';
+  position: absolute;
+  top: -4px; left: 0;
+  width: 100%; height: 10px;
+  background: var(--gradient-main);
+  filter: blur(8px);
+  opacity: 0.5;
+}
+
+/* Typing indicator */
+.typing-indicator {
+  display: flex;
+  gap: 5px;
+  padding: 12px 16px;
+  align-self: flex-start;
+}
+
+.typing-indicator span {
+  width: 8px; height: 8px;
+  background: var(--text-secondary);
+  border-radius: 50%;
+  animation: typingDot 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+.typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-8px); opacity: 1; }
+}
+
+/* Operator notification */
+.operator-notification {
+  background: var(--gradient-orange);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  text-align: center;
+  animation: msgIn 0.3s ease-out;
+}
+</style>
+</head>
+<body>
+
+<!-- Background effects -->
+<div class="bg-glow-orb orb1"></div>
+<div class="bg-glow-orb orb2"></div>
+<div class="bg-glow-orb orb3"></div>
+<div class="bg-glow-orb orb4"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="particles" id="particles"></div>
+
+<!-- Theme toggle -->
+<button class="theme-toggle" id="themeToggle" title="Сменить тему">🌙</button>
+
+<!-- Main content -->
+<div class="main-content">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-logo reveal">Vabe-кодер</div>
+    <p class="hero-subtitle reveal">Интеллектуальная разработка нового поколения</p>
+    <p class="hero-description reveal">
+      Создаём уникальные программные решения с применением искусственного интеллекта.
+      От прототипа за 2 часа до масштабных проектов за 3 дня.
+      Ваш код — наше мастерство.
+    </p>
+    <div class="hero-cta reveal">
+      <a href="#pricing" class="btn btn-primary">🚀 Выбрать тариф</a>
+      <a href="#features" class="btn btn-secondary">⚡ Узнать больше</a>
+    </div>
+  </section>
+
+  <div class="glow-divider"></div>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <h2 class="section-title reveal">Возможности Vabe-кодера</h2>
+    <p class="section-subtitle reveal">Полный спектр услуг по разработке программного обеспечения</p>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <span class="feature-icon">🤖</span>
+        <h3>ИИ-генерация кода</h3>
+        <p>Генерация production-ready кода с помощью нейросетей последнего поколения. Поддержка 50+ языков программирования.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">⚡</span>
+        <h3>Скорость разработки</h3>
+        <p>Простые задачи выполняются за 2 часа. Средние проекты — от 6 часов. Сложные системы — до 3 дней.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🛡️</span>
+        <h3>Аудит безопасности</h3>
+        <p>Автоматический анализ уязвимостей, сканирование зависимостей и рекомендации по исправлению.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🔄</span>
+        <h3>Рефакторинг кода</h3>
+        <p>Оптимизация существующего кода, улучшение читаемости, повышение производительности и масштабируемости.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">📱</span>
+        <h3>Fullstack разработка</h3>
+        <p>Создание веб-приложений, мобильных приложений, API и микросервисов под любые задачи.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🧪</span>
+        <h3>Автоматические тесты</h3>
+        <p>Генерация unit-, integration- и e2e тестов. Покрытие кода до 95% с первой итерации.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">📊</span>
+        <h3>Документация</h3>
+        <p>Автоматическая генерация технической документации, README и API-спецификаций.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🔌</span>
+        <h3>Интеграции</h3>
+        <p>Подключение платёжных систем, CRM, мессенджеров, сторонних API и облачных сервисов.</p>
+      </div>
+      <div class="feature-card reveal">
+        <span class="feature-icon">🚀</span>
+        <h3>DevOps & Деплой</h3>
+        <p>Настройка CI/CD пайплайнов, контейнеризация, развёртывание на серверах и облачных платформах.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-divider"></div>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <h2 class="section-title reveal">Тарифные планы</h2>
+    <p class="section-subtitle reveal">Выберите подходящий план для вашего проекта</p>
+    <div class="pricing-grid">
+
+      <!-- Basic -->
+      <div class="pricing-card basic reveal">
+        <div class="pricing-tier">Базовый</div>
+        <div class="pricing-price">5 000 ₽</div>
+        <p class="pricing-period">единоразово</p>
+        <div class="pricing-deadline">
+          <span class="icon">⏱️</span>
+          Срок: от 6 часов до 1 дня
+        </div>
+        <ul class="pricing-features">
+          <li>Генерация кода до 500 строк</li>
+          <li>1 язык программирования</li>
+          <li>Базовая отладка</li>
+          <li>Простые скрипты и утилиты</li>
+          <li>1 бесплатная правка</li>
+          <li>Поддержка по email</li>
+        </ul>
+        <button class="btn btn-secondary" onclick="openChat()" style="width:100%;justify-content:center;">Заказать</button>
+      </div>
+
+      <!-- Pro -->
+      <div class="pricing-card pro reveal">
+        <div class="pricing-badge">Хит</div>
+        <div class="pricing-tier">Про</div>
+        <div class="pricing-price">50 000 ₽</div>
+        <p class="pricing-period">единоразово</p>
+        <div class="pricing-deadline">
+          <span class="icon">⏱️</span>
+          Срок: от 1 до 2 дней
+        </div>
+        <ul class="pricing-features">
+          <li>Генерация кода до 5 000 строк</li>
+          <li>До 5 языков программирования</li>
+          <li>Полный стек разработки</li>
+          <li>Аудит безопасности</li>
+          <li>Автоматические тесты</li>
+          <li>Техническая документация</li>
+          <li>5 бесплатных правок</li>
+          <li>Приоритетная поддержка</li>
+          <li>Интеграции с API</li>
+        </ul>
+        <button class="btn btn-primary" onclick="openChat()" style="width:100%;justify-content:center;">Заказать</button>
+      </div>
+
+      <!-- Elite -->
+      <div class="pricing-card elite reveal">
+        <div class="pricing-badge">VIP</div>
+        <div class="pricing-tier">Элит</div>
+        <div class="pricing-price">500 000 ₽</div>
+        <p class="pricing-period">единоразово</p>
+        <div class="pricing-deadline">
+          <span class="icon">⏱️</span>
+          Срок: от 2 дней до 3 дней
+        </div>
+        <ul class="pricing-features">
+          <li>Неограниченный объём кода</li>
+          <li>Все языки и платформы</li>
+          <li>Масштабные enterprise-решения</li>
+          <li>Полный аудит безопасности</li>
+          <li>DevOps и CI/CD настройка</li>
+          <li>Микросервисная архитектура</li>
+          <li>Безлимитные правки</li>
+          <li>Персональный менеджер 24/7</li>
+          <li>SLA гарантия 99.9%</li>
+          <li>Обучение команды</li>
+        </ul>
+        <button class="btn btn-orange" onclick="openChat()" style="width:100%;justify-content:center;">Заказать</button>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="glow-divider"></div>
+
+  <!-- PROCESS -->
+  <section id="process">
+    <h2 class="section-title reveal">Как мы работаем</h2>
+    <p class="section-subtitle reveal">Прозрачный процесс от заявки до результата</p>
+    <div class="timeline">
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>📩 Заявка</h3>
+          <p>Опишите вашу задачу через чат или форму. Мы анализируем требования и согласовываем детали.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>📋 Оценка</h3>
+          <p>Рассчитываем стоимость, сроки и подбираем оптимальный тарифный план.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>💻 Разработка</h3>
+          <p>Наш ИИ-движок генерирует код, проводит тестирование и оптимизацию.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>✅ Тестирование</h3>
+          <p>Многоступенчатое тестирование: unit-тесты, интеграционные тесты, аудит безопасности.</p>
+        </div>
+      </div>
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-content">
+          <h3>🚀 Доставка</h3>
+          <p>Передача готового проекта, документация, помощь с деплоем и поддержка.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="glow-divider"></div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4>Vabe-кодер</h4>
+        <p style="color:var(--text-secondary);font-size:0.9rem;line-height:1.7;">
+          Профессиональная разработка программного обеспечения с применением искусственного интеллекта.
+        </p>
+      </div>
+      <div class="footer-col">
+        <h4>Навигация</h4>
+        <a href="#features">Возможности</a>
+        <a href="#pricing">Тарифы</a>
+        <a href="#process">Процесс</a>
+      </div>
+      <div class="footer-col">
+        <h4>Документы</h4>
+        <a href="#" onclick="openModal('privacyModal'); return false;">Политика конфиденциальности</a>
+        <a href="#" onclick="openModal('offerModal'); return false;">Публичная оферта</a>
+      </div>
+      <div class="footer-col">
+        <h4>Контакты</h4>
+        <a href="#">support@vabe-coder.ru</a>
+        <a href="#">Telegram: @vabecoder</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Vabe-кодер. Все права защищены.</p>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ MODALS ============ -->
+
+<!-- Privacy Policy Modal -->
+<div class="modal-overlay" id="privacyModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('privacyModal')">&times;</button>
+    <h2>Политика конфиденциальности</h2>
+    <p><strong>Дата вступления в силу:</strong> 01.01.2025</p>
+
+    <h3>1. Общие положения</h3>
+    <p>Настоящая Политика конфиденциальности определяет порядок обработки и защиты персональных данных пользователей сайта Vabe-кодер (далее — Оператор).</p>
+
+    <h3>2. Собираемые данные</h3>
+    <p>Мы можем собирать следующие персональные данные:</p>
+    <ul>
+      <li>Номер телефона</li>
+      <li>Имя пользователя</li>
+      <li>Адрес электронной почты</li>
+      <li>Описания проектов и задач</li>
+      <li>Данные о взаимодействиях с чат-ботом</li>
+      <li>Технические данные (IP-адрес, тип браузера, cookies)</li>
+    </ul>
+
+    <h3>3. Цели обработки</h3>
+    <p>Персональные данные обрабатываются для следующих целей:</p>
+    <ul>
+      <li>Предоставление услуг по разработке программного обеспечения</li>
+      <li>Связь с пользователем для уточнения деталей заказа</li>
+      <li>Улучшение качества обслуживания</li>
+      <li>Выполнение обязательств по публичной оферте</li>
+    </ul>
+
+    <h3>4. Защита данных</h3>
+    <p>Оператор принимает все необходимые организационные и технические меры для защиты персональных данных от несанкционированного доступа, изменения, раскрытия или уничтожения.</p>
+
+    <h3>5. Передача данных третьим лицам</h3>
+    <p>Оператор не передаёт персональные данные пользователей третьим лицам, за исключением случаев, предусмотренных законодательством Российской Федерации.</p>
+
+    <h3>6. Права пользователя</h3>
+    <p>Пользователь имеет право:</p>
+    <ul>
+      <li>Получить информацию о своих персональных данных</li>
+      <li>Потребовать исправления или удаления данных</li>
+      <li>Отозвать согласие на обработку данных</li>
+    </ul>
+
+    <h3>7. Контактная информация</h3>
+    <p>По вопросам, связанным с обработкой персональных данных, обращайтесь: <strong>support@vabe-coder.ru</strong></p>
+  </div>
+</div>
+
+<!-- Offer Modal -->
+<div class="modal-overlay" id="offerModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('offerModal')">&times;</button>
+    <h2>Публичная оферта</h2>
+    <p><strong>Дата вступления в силу:</strong> 01.01.2025</p>
+
+    <h3>1. Термины и определения</h3>
+    <p><strong>Исполнитель</strong> — Vabe-кодер, разработчик программного обеспечения.</p>
+    <p><strong>Заказчик</strong> — физическое или юридическое лицо, оформившее заявку на услуги Исполнителя.</p>
+    <p><strong>Услуга</strong> — разработка программного обеспечения, генерация кода, консультации и сопутствующие услуги.</p>
+
+    <h3>2. Предмет договора</h3>
+    <p>Исполнитель обязуется предоставить Заказчику услуги по разработке программного обеспечения, а Заказчик обязуется оплатить эти услуги на условиях, указанных в выбранном тарифном плане.</p>
+
+    <h3>3. Тарифные планы</h3>
+    <ul>
+      <li><strong>Базовый:</strong> 5 000 ₽ — генерация кода до 500 строк, срок от 6 часов до 1 дня</li>
+      <li><strong>Про:</strong> 50 000 ₽ — разработка до 5 000 строк, срок от 1 до 2 дней</li>
+      <li><strong>Элит:</strong> 500 000 ₽ — неограниченная разработка, срок от 2 до 3 дней</li>
+    </ul>
+
+    <h3>4. Порядок оказания услуг</h3>
+    <p>4.1. Заказчик оставляет заявку через форму на сайте или через чат-бот.<br>
+    4.2. Исполнитель подтверждает приём заявки в течение 30 минут.<br>
+    4.3. Исполнитель обязуется выполнить работу в сроки, указанные в выбранном тарифе.<br>
+    4.4. После завершения работы Исполнитель передаёт результат Заказчику.</p>
+
+    <h3>5. Оплата</h3>
+    <p>5.1. Оплата производится переводом на расчётный счёт Исполнителя.<br>
+    5.2. Оплата считается произведённой с момента зачисления средств на счёт Исполнителя.</p>
+
+    <h3>6. Гарантии и ответственность</h3>
+    <p>6.1. Исполнитель гарантирует качество выполненной работы в соответствии с техническим заданием.<br>
+    6.2. В стоимость тарифа включено определённое количество бесплатных правок.<br>
+    6.3. Исполнитель не несёт ответственности за использование кода в незаконных целях.</p>
+
+    <h3>7. Возврат средств</h3>
+    <p>7.1. Возврат средств возможен до начала работ.<br>
+    7.2. При возврате после начала работ стоимость рассчитывается пропорционально выполненному объёму.</p>
+
+    <h3>8. Реквизиты</h3>
+    <p>По вопросам, связанным с офертой, обращайтесь: <strong>support@vabe-coder.ru</strong></p>
+  </div>
+</div>
+
+<!-- ============ CHAT WIDGET ============ -->
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬</button>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-header-avatar">🤖</div>
+    <div class="chat-header-info">
+      <h4>Vabe-помощник</h4>
+      <span>Онлайн</span>
+    </div>
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg bot">
+      Привет! 👋 Я Vabe-помощник. Помогу подобрать тариф и оформить заказ. Оставьте ваши данные, и мы начнём работу!
+    </div>
+  </div>
+
+  <div class="chat-form" id="chatForm">
+    <input type="text" id="chatName" placeholder="Ваше имя" autocomplete="name">
+    <input type="tel" id="chatPhone" placeholder="+7 (___) ___-__-__" autocomplete="tel">
+    <label class="chat-checkbox">
+      <input type="checkbox" id="chatPrivacy">
+      <span>Я принимаю <a href="#" onclick="openModal('privacyModal'); return false;">политику конфиденциальности</a></span>
+    </label>
+    <div class="chat-send-row">
+      <button class="btn btn-primary" onclick="sendMessage()">Отправить ✉️</button>
+      <button class="btn-operator" onclick="callOperator()">📞 Позвать оператора</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ BACKGROUND CANVAS (Glowing Lines) ============
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let lines = [];
+let animFrame;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+class GlowLine {
+  constructor() {
+    this.reset();
+  }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.length = 80 + Math.random() * 200;
+    this.angle = Math.random() * Math.PI * 2;
+    this.speed = 0.2 + Math.random() * 0.5;
+    this.opacity = 0.05 + Math.random() * 0.15;
+    this.width = 0.5 + Math.random() * 1.5;
+    const colors = [
+      [139, 92, 246], // purple
+      [59, 130, 246], // blue
+      [6, 182, 212],  // cyan
+      [249, 115, 22], // orange
+      [236, 72, 153], // pink
+    ];
+    this.color = colors[Math.floor(Math.random() * colors.length)];
+    this.pulse = Math.random() * Math.PI * 2;
+    this.pulseSpeed = 0.005 + Math.random() * 0.02;
+  }
+  update() {
+    this.x += Math.cos(this.angle) * this.speed;
+    this.y += Math.sin(this.angle) * this.speed;
+    this.pulse += this.pulseSpeed;
+    if (this.x < -200 || this.x > canvas.width + 200 ||
+        this.y < -200 || this.y > canvas.height + 200) {
+      this.reset();
+    }
+  }
+  draw() {
+    const currentOpacity = this.opacity * (0.7 + 0.3 * Math.sin(this.pulse));
+    const endX = this.x + Math.cos(this.angle) * this.length;
+    const endY = this.y + Math.sin(this.angle) * this.length;
+    const gradient = ctx.createLinearGradient(this.x, this.y, endX, endY);
+    gradient.addColorStop(0, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 0)`);
+    gradient.addColorStop(0.5, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${currentOpacity})`);
+    gradient.addColorStop(1, `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, 0)`);
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(endX, endY);
+    ctx.strokeStyle = gradient;
+    ctx.lineWidth = this.width;
+    ctx.stroke();
+
+    // Glow
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(endX, endY);
+    ctx.strokeStyle = `rgba(${this.color[0]}, ${this.color[1]}, ${this.color[2]}, ${currentOpacity * 0.3})`;
+    ctx.lineWidth = this.width + 4;
+    ctx.stroke();
+  }
+}
+
+function initLines() {
+  const count = Math.min(60, Math.floor(window.innerWidth / 25));
+  lines = [];
+  for (let i = 0; i < count; i++) {
+    lines.push(new GlowLine());
+  }
+}
+
+function drawConnections() {
+  for (let i = 0; i < lines.length; i++) {
+    for (let j = i + 1; j < lines.length; j++) {
+      const dx = lines[i].x - lines[j].x;
+      const dy = lines[i].y - lines[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 150) {
+        const opacity = (1 - dist / 150) * 0.08;
+        ctx.beginPath();
+        ctx.moveTo(lines[i].x, lines[i].y);
+        ctx.lineTo(lines[j].x, lines[j].y);
+        ctx.strokeStyle = `rgba(139, 92, 246, ${opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  lines.forEach(l => { l.update(); l.draw(); });
+  drawConnections();
+  animFrame = requestAnimationFrame(animate);
+}
+
+resizeCanvas();
+initLines();
+animate();
+window.addEventListener('resize', () => { resizeCanvas(); initLines(); });
+
+// ============ PARTICLES ============
+function createParticles() {
+  const container = document.getElementById('particles');
+  const count = 30;
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 15) + 's';
+    p.style.animationDelay = Math.random() * 10 + 's';
+    const colors = ['#8b5cf6', '#3b82f6', '#06b6d4', '#f97316'];
+    const c = colors[Math.floor(Math.random() * colors.length)];
+    p.style.background = c;
+    p.style.boxShadow = `0 0 6px ${c}`;
+    container.appendChild(p);
+  }
+}
+createParticles();
+
+// ============ THEME TOGGLE ============
+const themeToggle = document.getElementById('themeToggle');
+let isDark = true;
+
+themeToggle.addEventListener('click', () => {
+  isDark = !isDark;
+  if (isDark) {
+    document.documentElement.removeAttribute('data-theme');
+    themeToggle.textContent = '🌙';
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    themeToggle.textContent = '☀️';
+  }
+});
+
+// ============ SCROLL REVEAL ============
+const revealElements = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach((entry, index) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => {
+        entry.target.classList.add('visible');
+      }, index * 100);
+    }
+  });
+}, { threshold: 0.1 });
+
+revealElements.forEach(el => revealObserver.observe(el));
+
+// ============ RIPPLE EFFECT ============
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const rect = this.getBoundingClientRect();
+    ripple.style.left = (e.clientX - rect.left) + 'px';
+    ripple.style.top = (e.clientY - rect.top) + 'px';
+    this.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+// ============ MODALS ============
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  });
+});
+
+// ============ CHAT ============
+let chatOpen = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chatWindow');
+  const btn = document.getElementById('chatToggle');
+  if (chatOpen) {
+    win.classList.add('open');
+    btn.textContent = '✕';
+  } else {
+    win.classList.remove('open');
+    btn.textContent = '💬';
+  }
+}
+
+function openChat() {
+  if (!chatOpen) toggleChat();
+}
+
+function addMessage(text, type) {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg ' + type;
+  msg.textContent = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+function addTyping() {
+  const container = document.getElementById('chatMessages');
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = '<span></span><span></span><span></span>';
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTyping() {
+  const t = document.getElementById('typingIndicator');
+  if (t) t.remove();
+}
+
+function sendMessage() {
+  const name = document.getElementById('chatName').value.trim();
+  const phone = document.getElementById('chatPhone').value.trim();
+  const privacy = document.getElementById('chatPrivacy').checked;
+
+  if (!name) {
+    addMessage('Пожалуйста, введите ваше имя 😊', 'bot');
+    return;
+  }
+  if (!phone) {
+    addMessage('Пожалуйста, введите номер телефона 📱', 'bot');
+    return;
+  }
+  if (!privacy) {
+    addMessage('Пожалуйста, примите политику конфиденциальности 📋', 'bot');
+    return;
+  }
+
+  // User message
+  addMessage(`Имя: ${name}, Телефон: ${phone}`, 'user');
+
+  // Clear form
+  document.getElementById('chatName').value = '';
+  document.getElementById('chatPhone').value = '';
+  document.getElementById('chatPrivacy').checked = false;
+
+  // Bot response
+  addTyping();
+  setTimeout(() => {
+    removeTyping();
+    addMessage(`Спасибо, ${name}! 🎉 Ваша заявка принята. Мы свяжемся с вами по номеру ${phone} в ближайшее время. А пока могу рассказать о наших тарифах!`, 'bot');
+  }, 1500);
+}
+
+function callOperator() {
+  const name = document.getElementById('chatName').value.trim() || 'Гость';
+  addMessage(`📞 ${name} приглашает оператора...`, 'user');
+  addTyping();
+  setTimeout(() => {
+    removeTyping();
+    const notif = document.createElement('div');
+    notif.className = 'operator-notification';
+    notif.textContent = '🔔 Оператор уведомлён! Ожидайте подключения...';
+    document.getElementById('chatMessages').appendChild(notif);
+    document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+
+    setTimeout(() => {
+      addMessage(`Оператор подключится к чату в течение 2 минут. Спасибо за обращение, ${name}! 👨‍💻`, 'bot');
+    }, 2000);
+  }, 1000);
+}
+
+// Phone mask
+document.getElementById('chatPhone').addEventListener('input', function(e) {
+  let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+  if (!x[2] && x[1] === '7') {
+    e.target.value = '+7 ';
+  } else if (!x[2] && x[1] === '8') {
+    e.target.value = '+7 ';
+  } else {
+    e.target.value = !x[2] ? x[1] : '+7 (' + x[2] + (x[3] ? ') ' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+  }
+});
+
+// ============ SMOOTH SCROLL ============
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href === '#') return;
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
